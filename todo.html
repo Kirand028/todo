@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="todo.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>To Do App</title>
+</head>
+<body>
+    <div class="main">
+        
+        <h1>To Do</h1>
+
+        <div class="add" id="add">
+            <input type="text" name="" id="todo" placeholder="Add a ToDo" required>
+            <button class="ab" id="ab"><i class="fas fa-plus-circle"></i></button>
+        </div>
+
+        <div class="list" id="list">
+                
+        </div>
+    </div>
+</body>
+<script>
+
+            // Get references to the div and button elements
+            const myDiv = document.getElementById('list');
+            const addButton = document.getElementById('ab');
+            const addTodo = document.getElementById('todo');
+
+            // Retrieve stored todos from localStorage or create an empty array
+            let storedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+
+            // Function to save todos to localStorage
+            function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(storedTodos));
+            }
+
+            // Function to display todos from localStorage
+            function displayTodos() {
+            myDiv.innerHTML = ''; // Clear the existing list
+            storedTodos.forEach(todo => {
+                const newDiv = document.createElement('div');
+                const newElement = document.createElement('input');
+                const newElement2 = document.createElement('button');
+                const newElement3 = document.createElement('button');
+
+                newElement.type = 'text';
+                newElement.value = ' ' + todo.text;
+                newElement.readOnly = true;
+
+                newElement2.classList.add('done');
+                newElement3.classList.add('delete');
+                newDiv.classList.add('li');
+
+                myDiv.appendChild(newDiv);
+                newDiv.appendChild(newElement);
+                newDiv.appendChild(newElement2);
+                newDiv.appendChild(newElement3);
+
+                const iconElement1 = document.createElement('i');
+                iconElement1.className = 'fas fa-check-circle';
+                const iconElement2 = document.createElement('i');
+                iconElement2.className = 'fas fa-times-circle';
+
+                newElement2.appendChild(iconElement1);
+                newElement3.appendChild(iconElement2);
+            });
+            }
+
+            // Function to add a new element to the div
+            function addElement() {
+            const todoText = addTodo.value;
+
+            if (todoText !== null && todoText !== '') {
+                storedTodos.push({ text: todoText });
+                saveTodos();
+                displayTodos();
+            }
+            addTodo.value = '';
+            }
+
+            function removeElement(event) {
+            if (event.target.classList.contains('delete') || event.target.classList.contains('fa-times-circle')) {
+                const listItem = event.target.closest('.li');
+                if (listItem) {
+                const todoIndex = Array.from(myDiv.children).indexOf(listItem);
+                storedTodos.splice(todoIndex, 1);
+                saveTodos();
+                displayTodos();
+                }
+            }
+            }
+
+
+            // Function to toggle the "done" class and change color
+            function toggleDone(event) {
+            const clickedElement = event.target;
+
+            if (clickedElement.classList.contains('done') || clickedElement.classList.contains('fa-check-circle')) {
+                const listItem = clickedElement.closest('.li');
+                if (listItem) {
+                listItem.classList.toggle('done');
+                }
+            }
+            }
+
+            // Attach a click event listener to the button
+            addButton.addEventListener('click', addElement);
+            myDiv.addEventListener('click', removeElement);
+            myDiv.addEventListener('click', toggleDone);
+
+            // Display stored todos when the page loads
+            window.addEventListener('DOMContentLoaded', () => {
+            displayTodos();
+            });
+
+</script>
+</html>
